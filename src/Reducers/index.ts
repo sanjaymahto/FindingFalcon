@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux'
-import falconApiData from './FindingFalconStore'
+import falconSearchReducer from './FindingFalconStore'
 
 export default combineReducers({
-  falconApiData,
+  falconSearchReducer,
 })

@@ -12,7 +12,7 @@ import {
 export function getPlanetsData() {
   return getPlanets()
     .then(res => res.json())
-    .then(res => res.data)
+    .then(res => res)
 }
 
 /**
@@ -22,7 +22,7 @@ export function getPlanetsData() {
 export function getVehiclesData() {
   return getVehicles()
     .then(res => res.json())
-    .then(res => res.data)
+    .then(res => res)
 }
 
 /**
@@ -32,7 +32,7 @@ export function getVehiclesData() {
 export function getAuthenticationTokenData() {
   return getAuthenticationToken()
     .then(res => res.json())
-    .then(res => res.data)
+    .then(res => res)
 }
 
 /**

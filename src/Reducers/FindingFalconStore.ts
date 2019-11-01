@@ -3,8 +3,8 @@ import * as CONSTANTS from './Constants'
 
 // Initializing Immutable state Store
 const initialState = fromJS({
-  planets_metadata: {},
-  vehicles_metadata: {},
+  planets_metadata: [],
+  vehicles_metadata: [],
   authentication_token: null,
   falcon_finding_loader: false,
   falcon_finding_response: {},
@@ -59,9 +59,9 @@ function setAuthenticationToken(
  * @param {object} action.payload The body of the action.
  * @returns {Object} The mutated state.
  */
-function falconApiData(
+function falconSearchReducer(
   state = initialState,
-  action: { type: string; payload: object }
+  action: { type: string; payload: any }
 ) {
   const { type, payload } = action
   switch (type) {
@@ -76,4 +76,4 @@ function falconApiData(
   }
 }
 
-export default falconApiData
+export default falconSearchReducer
