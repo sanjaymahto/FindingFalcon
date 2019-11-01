@@ -3,6 +3,8 @@
   "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
   "jsRules": {},
   "rules": {
+    "prettier": true,
+    "interface-name": false,
     "jsx-no-lambda": false,
     "ordered-imports": false,
     "arrow-return-shorthand": true,
@@ -13,7 +15,6 @@
     "eofline": true,
     "forin": true,
     "import-spacing": true,
-    "interface-name": false,
     "interface-over-type-literal": true,
     "label-position": true,
     "max-line-length": [true, 140],
@@ -101,7 +102,7 @@
     ],
     "no-consecutive-blank-lines": true
   },
-  "rulesDirectory": [],
+  "rulesDirectory": ["tslint-plugin-prettier"],
   "linterOptions": {
     "exclude": [
       "config/**/*.js",
