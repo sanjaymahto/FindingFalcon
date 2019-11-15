@@ -17,103 +17,50 @@ class Home extends React.PureComponent<any, any> {
   constructor(props: any) {
     super(props)
     this.state = {
-      Planet_disableState: {
-        planet1: false,
-        planet2: true,
-        planet3: true,
-        planet4: true,
-      },
-      vehicles_disableState: {
-        planet1: false,
-        planet2: false,
-        planet3: false,
-        planet4: false,
-      },
-      vehicles_showState: {
-        planet1: true,
-        planet2: false,
-        planet3: false,
-        planet4: false,
-      },
+      total_time: null,
     }
   }
 
   componentDidMount() {
     this.props.setPlanetsData()
     this.props.setVehiclesData()
+    this.props.setAuthenticationToken()
+  }
+
+  planetAndVehicleSelectionList = () => {
+    return Array.apply(null, Array(4)).map((e, i) => {
+      return (
+        <Col span={4} key={i}>
+          <div>
+            <p>{`Destination ${++i}`}</p>
+            <PlanetDropdown
+              planets={this.props.planets_metadata}
+              disabled={false}
+            />
+            <VehicleRadioComp
+              vehicles={this.props.vehicles_metadata}
+              disabled={false}
+            />
+          </div>
+        </Col>
+      )
+    })
   }
 
   render() {
     return (
       <div className="HomeContainer">
-        <h1>Finding Falcone</h1>
-        <h4>Select planets you want to search in:</h4>
+        <h1 className="HomeContainer_heading">Finding Falcone</h1>
+        <h4 className="HomeContainer_subHeading">
+          Select planets you want to search in:
+        </h4>
         <Row type="flex" justify="space-around">
-          <Col span={4}>
-            <div>
-              <p>Destination 1</p>
-              <PlanetDropdown
-                planets={this.props.planets_metadata}
-                disabled={this.state.Planet_disableState.planet1}
-              />
-              {this.state.vehicles_showState.planet1 ? (
-                <VehicleRadioComp
-                  vehicles={this.props.vehicles_metadata}
-                  disabled={this.state.vehicles_disableState.planet1}
-                />
-              ) : null}
-            </div>
-          </Col>
-          <Col span={4}>
-            <div>
-              <p>Destination 2</p>
-              <PlanetDropdown
-                planets={this.props.planets_metadata}
-                disabled={this.state.Planet_disableState.planet2}
-              />
-              {this.state.vehicles_showState.planet2 ? (
-                <VehicleRadioComp
-                  vehicles={this.props.vehicles_metadata}
-                  disabled={this.state.vehicles_disableState.planet2}
-                />
-              ) : null}
-            </div>
-          </Col>
-          <Col span={4}>
-            <div>
-              <p>Destination 3</p>
-              <PlanetDropdown
-                planets={this.props.planets_metadata}
-                disabled={this.state.Planet_disableState.planet3}
-              />
-              {this.state.vehicles_showState.planet3 ? (
-                <VehicleRadioComp
-                  vehicles={this.props.vehicles_metadata}
-                  disabled={this.state.vehicles_disableState.planet3}
-                />
-              ) : null}
-            </div>
-          </Col>
-          <Col span={4}>
-            <div>
-              <p>Destination 4</p>
-              <PlanetDropdown
-                planets={this.props.planets_metadata}
-                disabled={this.state.Planet_disableState.planet4}
-              />
-              {this.state.vehicles_showState.planet4 ? (
-                <VehicleRadioComp
-                  vehicles={this.props.vehicles_metadata}
-                  disabled={this.state.vehicles_disableState.planet4}
-                />
-              ) : null}
-            </div>
-          </Col>
+          {this.planetAndVehicleSelectionList()}
         </Row>
         <div>
-          <p>Time Taken: {`140`}</p>
+          <p className="TimeCalculator">Time Taken: {`140`}</p>
         </div>
-        <div>
+        <div className="Button_find">
           <Button>Find Falcon!</Button>
         </div>
       </div>
@@ -143,7 +90,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   )
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Home)
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

@@ -1,0 +1,32 @@
+.HomeContainer {
+  &_heading {
+    text-align: center;
+    font-weight: 600;
+  }
+  &_subHeading {
+    text-align: center;
+    font-weight: 600;
+    font-style: 'tahoma';
+    font-weight: 500;
+  }
+}
+
+.TimeCalculator {
+  margin-top: 2%;
+  font-size: larger;
+  text-align: center;
+  font-weight: 600;
+  font-style: 'tahoma';
+  font-weight: 500;
+}
+
+.Button {
+  &_find {
+    margin-top: 2%;
+    font-size: larger;
+    text-align: center;
+    font-weight: 600;
+    font-style: 'tahoma';
+    font-weight: 500;
+  }
+}

@@ -46,7 +46,7 @@ function setAuthenticationToken(
   state: { set: (arg0: string, arg1: any) => void },
   payload: any
 ) {
-  return state.set('authentication_token', payload)
+  return state.set('authentication_token', payload.token)
 }
 
 /**
