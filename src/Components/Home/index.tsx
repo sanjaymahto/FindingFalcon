@@ -18,6 +18,10 @@ class Home extends React.PureComponent<any, any> {
     super(props)
     this.state = {
       total_time: null,
+      selected_planets: {},
+      disabled_planets: {},
+      selected_vehicles: {},
+      disabled_vehicles: {},
     }
   }
 
@@ -27,6 +31,43 @@ class Home extends React.PureComponent<any, any> {
     this.props.setAuthenticationToken()
   }
 
+  onPlanetSelect = (event: any, planet: any) => {
+    this.setState(
+      (prevState: { selected_planets: any; disabled_planets: any }) => {
+        return {
+          selected_planets: Object.assign(
+            {
+              [event]: event,
+            },
+            prevState.selected_planets
+          ),
+          disabled_planets: Object.assign(
+            {
+              [planet]: true,
+            },
+            prevState.disabled_planets
+          ),
+        }
+      },
+      () => {
+        this.PlanetsFilter()
+      }
+    )
+  }
+
+  PlanetsFilter = () => {
+    const planets = this.props.planets_metadata.filter(
+      (planet: { name: React.ReactText }) => {
+        if (!this.state.selected_planets[planet.name]) {
+          return planet
+        } else {
+          return null
+        }
+      }
+    )
+    return planets
+  }
+
   planetAndVehicleSelectionList = () => {
     return Array.apply(null, Array(4)).map((e, i) => {
       return (
@@ -34,12 +75,15 @@ class Home extends React.PureComponent<any, any> {
           <div>
             <p>{`Destination ${++i}`}</p>
             <PlanetDropdown
-              planets={this.props.planets_metadata}
-              disabled={false}
+              planets={this.PlanetsFilter()}
+              onOptionChange={(event: any) => {
+                this.onPlanetSelect(event, i)
+              }}
+              disabled={this.state.disabled_planets[i]}
             />
             <VehicleRadioComp
               vehicles={this.props.vehicles_metadata}
-              disabled={false}
+              disabled={this.state.disabled_vehicles[i]}
             />
           </div>
         </Col>
