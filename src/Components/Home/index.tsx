@@ -21,7 +21,18 @@ class Home extends React.PureComponent<any, any> {
       selected_planets: {},
       disabled_planets: {},
       selected_vehicles: {},
-      disabled_vehicles: {},
+      disabled_vehicles: {
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+      },
+      vehicles_options_visibility: {
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+      },
     }
   }
 
@@ -33,7 +44,11 @@ class Home extends React.PureComponent<any, any> {
 
   onPlanetSelect = (event: any, planet: any) => {
     this.setState(
-      (prevState: { selected_planets: any; disabled_planets: any }) => {
+      (prevState: {
+        selected_planets: any
+        disabled_planets: any
+        vehicles_options_visibility: any
+      }) => {
         return {
           selected_planets: Object.assign(
             {
@@ -46,6 +61,12 @@ class Home extends React.PureComponent<any, any> {
               [planet]: true,
             },
             prevState.disabled_planets
+          ),
+          vehicles_options_visibility: Object.assign(
+            prevState.vehicles_options_visibility,
+            {
+              [planet]: true,
+            }
           ),
         }
       },
@@ -68,6 +89,25 @@ class Home extends React.PureComponent<any, any> {
     return planets
   }
 
+  onVehicleSelect = (event: any, vehicle: any) => {
+    this.setState(
+      (prevState: { selected_vehicles: any; disabled_vehicles: any }) => {
+        return {
+          selected_vehicles: Object.assign(
+            {
+              [event.target.value]: event.target.value,
+            },
+            prevState.selected_vehicles
+          ),
+          disabled_vehicles: Object.assign(prevState.disabled_vehicles, {
+            [vehicle]: true,
+          }),
+        }
+      }
+    )
+    debugger
+  }
+
   planetAndVehicleSelectionList = () => {
     return Array.apply(null, Array(4)).map((e, i) => {
       return (
@@ -81,10 +121,15 @@ class Home extends React.PureComponent<any, any> {
               }}
               disabled={this.state.disabled_planets[i]}
             />
-            <VehicleRadioComp
-              vehicles={this.props.vehicles_metadata}
-              disabled={this.state.disabled_vehicles[i]}
-            />
+            {this.state.vehicles_options_visibility[i] ? (
+              <VehicleRadioComp
+                vehicles={this.props.vehicles_metadata}
+                onOptionChange={(event: any) => {
+                  this.onVehicleSelect(event, i)
+                }}
+                disabled={this.state.disabled_vehicles[i]}
+              />
+            ) : null}
           </div>
         </Col>
       )
