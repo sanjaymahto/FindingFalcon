@@ -11,13 +11,15 @@ interface PlanetProps {
 }
 
 const planetOptions = (planets: Array<{ name: string; distance: number }>) => {
-  return planets.map((planet, index) => {
-    return (
-      <Option key={index} value={planet.name}>
-        {planet.name}
-      </Option>
-    )
-  })
+  return planets.map(
+    (planet: { name: string; distance: number }, index: number) => {
+      return (
+        <Option key={index} value={planet.name}>
+          {planet.name}
+        </Option>
+      )
+    }
+  )
 }
 
 export const PlanetDropdown: React.SFC<PlanetProps> = props => {
