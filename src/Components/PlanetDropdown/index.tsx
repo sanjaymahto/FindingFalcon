@@ -26,6 +26,7 @@ const planetOptions = (planets: Array<{ name: string; distance: number }>) => {
 export const PlanetDropdown: React.SFC<PlanetProps> = props => {
   return (
     <Select
+      loading={props.planets.length ? false : true}
       showSearch
       style={{ width: 200 }}
       placeholder="Select a planet"

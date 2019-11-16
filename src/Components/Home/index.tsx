@@ -1,23 +1,27 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Row, Col, Button, Icon } from 'antd'
+import { Row, Col, Button, Icon, message } from 'antd'
 import { bindActionCreators, Dispatch } from 'redux'
+import { withRouter } from 'react-router'
 import { PlanetDropdown } from '../PlanetDropdown'
 import * as actions from './actions'
-import './index.scss'
 import { VehicleRadioComp } from '../VehicleRadioComponent'
+import './index.scss'
 
 class Home extends React.Component<any, any> {
   static propTypes: {
     planets_metadata: PropTypes.Requireable<Array<any>>
     vehicles_metadata: PropTypes.Requireable<Array<any>>
+    authentication_token: PropTypes.Requireable<string>
+    falcon_finding_loader: PropTypes.Requireable<boolean>
   }
+  total_time: number
 
   constructor(props: any) {
     super(props)
+    this.total_time = 0
     this.state = {
-      total_time: null,
       selected_planets: {},
       disabled_planets: {},
       selected_vehicles: {},
@@ -56,12 +60,9 @@ class Home extends React.Component<any, any> {
         vehicles_options_visibility: any
       }) => {
         return {
-          selected_planets: Object.assign(
-            {
-              [event]: event,
-            },
-            prevState.selected_planets
-          ),
+          selected_planets: Object.assign(prevState.selected_planets, {
+            [planet]: event,
+          }),
           disabled_planets: Object.assign(
             {
               [planet]: true,
@@ -77,15 +78,15 @@ class Home extends React.Component<any, any> {
         }
       },
       () => {
-        this.PlanetsFilter()
+        this.PlanetsFilter(planet)
       }
     )
   }
 
-  PlanetsFilter = () => {
+  PlanetsFilter = (i: string | number) => {
     const planets = this.state.planets.filter(
       (planet: { name: React.ReactText }) => {
-        if (!this.state.selected_planets[planet.name]) {
+        if (!(this.state.selected_planets[i] === planet.name)) {
           return planet
         } else {
           return null
@@ -97,10 +98,10 @@ class Home extends React.Component<any, any> {
     })
   }
 
-  vehiclesFilter = (vehicle: any = '') => {
+  vehiclesFilter = (i: string | number) => {
     const vehicles = this.state.vehicles.filter(
       (vh: { name: React.ReactText; total_no: number }) => {
-        if (vh.name === vehicle) {
+        if (vh.name === this.state.selected_vehicles[i]) {
           return Object.assign({ ...vh }, { total_no: --vh.total_no })
         } else {
           return vh
@@ -116,21 +117,64 @@ class Home extends React.Component<any, any> {
     this.setState(
       (prevState: { selected_vehicles: any; disabled_vehicles: any }) => {
         return {
-          selected_vehicles: Object.assign(
-            {
-              [event.target.value]: event.target.value,
-            },
-            prevState.selected_vehicles
-          ),
+          selected_vehicles: Object.assign(prevState.selected_vehicles, {
+            [vehicle]: event.target.value,
+          }),
           disabled_vehicles: Object.assign(prevState.disabled_vehicles, {
             [vehicle]: true,
           }),
         }
       },
       () => {
-        this.vehiclesFilter()
+        this.vehiclesFilter(vehicle)
+        this.calculateTimeTaken(vehicle)
       }
     )
+  }
+
+  calculateTimeTaken = (i: string | number) => {
+    const vehicle = this.state.selected_vehicles[i]
+    const vehicleMetaData = this.props.vehicles_metadata.find(
+      (vh: { name: any }) => {
+        return vh.name === vehicle
+      }
+    )
+    const planet = this.state.selected_planets[i]
+    const planetMetaData = this.props.planets_metadata.find(
+      (pl: { name: any }) => {
+        return pl.name === planet
+      }
+    )
+
+    if (planetMetaData.distance > vehicleMetaData.max_distance) {
+      message.error("Sorry! This vehicle can't reach the planet you selected")
+      this.setState(
+        (prevState: { selected_vehicles: any; disabled_vehicles: any }) => {
+          return {
+            disabled_vehicles: Object.assign(prevState.disabled_vehicles, {
+              [i]: false,
+            }),
+          }
+        },
+        () => {
+          const vehicles = this.state.vehicles.filter(
+            (vh: { name: React.ReactText; total_no: number }) => {
+              if (vh.name === this.state.selected_vehicles[i]) {
+                return Object.assign({ ...vh }, { total_no: ++vh.total_no })
+              } else {
+                return vh
+              }
+            }
+          )
+          this.setState({
+            vehicles,
+          })
+        }
+      )
+    } else {
+      const time = planetMetaData.distance / vehicleMetaData.speed
+      this.total_time += time
+    }
   }
 
   planetAndVehicleSelectionList = () => {
@@ -143,7 +187,6 @@ class Home extends React.Component<any, any> {
               planets={this.state.planets}
               onOptionChange={(event: any) => {
                 this.onPlanetSelect(event, i)
-                this.PlanetsFilter()
               }}
               disabled={this.state.disabled_planets[i]}
             />
@@ -152,7 +195,6 @@ class Home extends React.Component<any, any> {
                 vehicles={this.state.vehicles}
                 onOptionChange={(event: any) => {
                   this.onVehicleSelect(event, i)
-                  this.vehiclesFilter(event.target.value)
                 }}
                 disabled={this.state.disabled_vehicles[i]}
               />
@@ -171,7 +213,7 @@ class Home extends React.Component<any, any> {
     return (
       <div className="HomeContainer">
         <h1 className="HomeContainer_heading">
-          <span style={{ marginLeft: '8.5%' }}>Finding Falcone</span>
+          <span style={{ marginLeft: '8.5%' }}>Finding Falcone!</span>
           <span style={{ float: 'right', marginRight: '32px' }}>
             <Button onClick={this.resetData}>
               <Icon type="reload" />
@@ -186,10 +228,29 @@ class Home extends React.Component<any, any> {
           {this.planetAndVehicleSelectionList()}
         </Row>
         <div>
-          <p className="TimeCalculator">Time Taken: {`140`}</p>
+          <p className="TimeCalculator">Time Taken: {this.total_time}</p>
         </div>
         <div className="Button_find">
-          <Button>Find Falcon!</Button>
+          <Button
+            onClick={async () => {
+              const vehicleArray = Object.keys(
+                this.state.selected_vehicles
+              ).map(i => this.state.selected_vehicles[i])
+              const planetsArray = Object.keys(this.state.selected_planets).map(
+                i => this.state.selected_planets[i]
+              )
+              await this.props.findFalconCall({
+                token: this.props.authentication_token,
+                planet_names: planetsArray,
+                vehicle_names: vehicleArray,
+                total_time: this.total_time,
+              })
+              this.props.history.push('/result')
+            }}
+          >
+            {this.props.falcon_finding_loader ? <Icon type="loading" /> : null}
+            Find Falcon!
+          </Button>
         </div>
       </div>
     )
@@ -199,6 +260,8 @@ class Home extends React.Component<any, any> {
 Home.propTypes = {
   planets_metadata: PropTypes.array,
   vehicles_metadata: PropTypes.array,
+  authentication_token: PropTypes.string,
+  falcon_finding_loader: PropTypes.bool,
 }
 
 const mapStateToProps = (state: any) => {
@@ -206,6 +269,8 @@ const mapStateToProps = (state: any) => {
   return {
     planets_metadata: state.planets_metadata,
     vehicles_metadata: state.vehicles_metadata,
+    authentication_token: state.authentication_token,
+    falcon_finding_loader: state.falcon_finding_loader,
   }
 }
 
@@ -218,4 +283,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Home))

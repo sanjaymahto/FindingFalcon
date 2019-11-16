@@ -4,6 +4,7 @@ import { Provider } from 'react-redux'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import configureStore from './RootStore'
 import Home from './Components/Home/index'
+import Result from './Components/Result/index'
 import * as serviceWorker from './serviceWorker'
 import './index.scss'
 
@@ -13,6 +14,7 @@ ReactDOM.render(
       <div>
         <Switch>
           <Route exact path="/" component={Home} />
+          <Route exact path="/result" component={Result} />
         </Switch>
       </div>
     </Router>
