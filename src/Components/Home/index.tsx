@@ -1,14 +1,14 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Row, Col, Button } from 'antd'
+import { Row, Col, Button, Icon } from 'antd'
 import { bindActionCreators, Dispatch } from 'redux'
 import { PlanetDropdown } from '../PlanetDropdown'
 import * as actions from './actions'
 import './index.scss'
 import { VehicleRadioComp } from '../VehicleRadioComponent'
 
-class Home extends React.PureComponent<any, any> {
+class Home extends React.Component<any, any> {
   static propTypes: {
     planets_metadata: PropTypes.Requireable<Array<any>>
     vehicles_metadata: PropTypes.Requireable<Array<any>>
@@ -34,6 +34,7 @@ class Home extends React.PureComponent<any, any> {
         4: false,
       },
       vehicles: [],
+      planets: [],
     }
   }
 
@@ -41,7 +42,10 @@ class Home extends React.PureComponent<any, any> {
     await this.props.setPlanetsData()
     await this.props.setVehiclesData()
     await this.props.setAuthenticationToken()
-    await this.vehiclesFilter('')
+    this.setState({
+      planets: this.props.planets_metadata,
+      vehicles: this.props.vehicles_metadata,
+    })
   }
 
   onPlanetSelect = (event: any, planet: any) => {
@@ -79,7 +83,7 @@ class Home extends React.PureComponent<any, any> {
   }
 
   PlanetsFilter = () => {
-    const planets = this.props.planets_metadata.filter(
+    const planets = this.state.planets.filter(
       (planet: { name: React.ReactText }) => {
         if (!this.state.selected_planets[planet.name]) {
           return planet
@@ -88,11 +92,13 @@ class Home extends React.PureComponent<any, any> {
         }
       }
     )
-    return planets
+    this.setState({
+      planets,
+    })
   }
 
-  vehiclesFilter = (vehicle: React.ReactText) => {
-    const vehicles = this.props.vehicles_metadata.filter(
+  vehiclesFilter = (vehicle: any = '') => {
+    const vehicles = this.state.vehicles.filter(
       (vh: { name: React.ReactText; total_no: number }) => {
         if (vh.name === vehicle) {
           return Object.assign({ ...vh }, { total_no: --vh.total_no })
@@ -122,7 +128,7 @@ class Home extends React.PureComponent<any, any> {
         }
       },
       () => {
-        this.vehiclesFilter('')
+        this.vehiclesFilter()
       }
     )
   }
@@ -134,9 +140,10 @@ class Home extends React.PureComponent<any, any> {
           <div>
             <p>{`Destination ${++i}`}</p>
             <PlanetDropdown
-              planets={this.PlanetsFilter()}
+              planets={this.state.planets}
               onOptionChange={(event: any) => {
                 this.onPlanetSelect(event, i)
+                this.PlanetsFilter()
               }}
               disabled={this.state.disabled_planets[i]}
             />
@@ -156,10 +163,22 @@ class Home extends React.PureComponent<any, any> {
     })
   }
 
+  resetData = () => {
+    window.location.reload()
+  }
+
   render() {
     return (
       <div className="HomeContainer">
-        <h1 className="HomeContainer_heading">Finding Falcone</h1>
+        <h1 className="HomeContainer_heading">
+          <span style={{ marginLeft: '8.5%' }}>Finding Falcone</span>
+          <span style={{ float: 'right', marginRight: '32px' }}>
+            <Button onClick={this.resetData}>
+              <Icon type="reload" />
+              &nbsp;Reset
+            </Button>
+          </span>
+        </h1>
         <h4 className="HomeContainer_subHeading">
           Select planets you want to search in:
         </h4>
