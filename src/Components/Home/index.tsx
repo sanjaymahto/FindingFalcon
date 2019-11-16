@@ -33,13 +33,15 @@ class Home extends React.PureComponent<any, any> {
         3: false,
         4: false,
       },
+      vehicles: [],
     }
   }
 
-  componentDidMount() {
-    this.props.setPlanetsData()
-    this.props.setVehiclesData()
-    this.props.setAuthenticationToken()
+  async componentDidMount() {
+    await this.props.setPlanetsData()
+    await this.props.setVehiclesData()
+    await this.props.setAuthenticationToken()
+    await this.vehiclesFilter('')
   }
 
   onPlanetSelect = (event: any, planet: any) => {
@@ -89,6 +91,21 @@ class Home extends React.PureComponent<any, any> {
     return planets
   }
 
+  vehiclesFilter = (vehicle: React.ReactText) => {
+    const vehicles = this.props.vehicles_metadata.filter(
+      (vh: { name: React.ReactText; total_no: number }) => {
+        if (vh.name === vehicle) {
+          return Object.assign({ ...vh }, { total_no: --vh.total_no })
+        } else {
+          return vh
+        }
+      }
+    )
+    this.setState({
+      vehicles,
+    })
+  }
+
   onVehicleSelect = (event: any, vehicle: any) => {
     this.setState(
       (prevState: { selected_vehicles: any; disabled_vehicles: any }) => {
@@ -103,9 +120,11 @@ class Home extends React.PureComponent<any, any> {
             [vehicle]: true,
           }),
         }
+      },
+      () => {
+        this.vehiclesFilter('')
       }
     )
-    debugger
   }
 
   planetAndVehicleSelectionList = () => {
@@ -123,9 +142,10 @@ class Home extends React.PureComponent<any, any> {
             />
             {this.state.vehicles_options_visibility[i] ? (
               <VehicleRadioComp
-                vehicles={this.props.vehicles_metadata}
+                vehicles={this.state.vehicles}
                 onOptionChange={(event: any) => {
                   this.onVehicleSelect(event, i)
+                  this.vehiclesFilter(event.target.value)
                 }}
                 disabled={this.state.disabled_vehicles[i]}
               />

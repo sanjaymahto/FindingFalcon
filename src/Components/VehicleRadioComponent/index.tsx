@@ -28,7 +28,12 @@ const vehicleOptions = (
 ) => {
   return vehicles.map((vehicle, index) => {
     return (
-      <Radio key={index} style={radioStyle} value={vehicle.name}>
+      <Radio
+        key={index}
+        style={radioStyle}
+        value={vehicle.name}
+        disabled={vehicle.total_no ? false : true}
+      >
         {`${vehicle.name}(${vehicle.total_no})`}
       </Radio>
     )
