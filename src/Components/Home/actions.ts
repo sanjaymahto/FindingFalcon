@@ -55,9 +55,21 @@ export const setAuthenticationToken = () => async (
 export const findFalconCall = (param: any) => async (
   dispatch: (arg0: { type: string; payload: any }) => void
 ) => {
+  dispatch({
+    type: CONSTANTS.SET_TOTAL_TIME_TAKEN,
+    payload: param.total_time,
+  })
+  dispatch({
+    type: CONSTANTS.SHOW_FALCON_FIND_LOADER,
+    payload: true,
+  })
   const payload = await findFalconServiceCall(param)
   dispatch({
     type: CONSTANTS.SET_FIND_FALCON_RESULT,
     payload: payload,
+  })
+  dispatch({
+    type: CONSTANTS.SHOW_FALCON_FIND_LOADER,
+    payload: false,
   })
 }

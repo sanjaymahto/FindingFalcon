@@ -3,16 +3,18 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { Row, Col, Button, Icon, message } from 'antd'
 import { bindActionCreators, Dispatch } from 'redux'
+import { withRouter } from 'react-router'
 import { PlanetDropdown } from '../PlanetDropdown'
 import * as actions from './actions'
-import './index.scss'
 import { VehicleRadioComp } from '../VehicleRadioComponent'
+import './index.scss'
 
 class Home extends React.Component<any, any> {
   static propTypes: {
     planets_metadata: PropTypes.Requireable<Array<any>>
     vehicles_metadata: PropTypes.Requireable<Array<any>>
     authentication_token: PropTypes.Requireable<string>
+    falcon_finding_loader: PropTypes.Requireable<boolean>
   }
   total_time: number
 
@@ -211,7 +213,7 @@ class Home extends React.Component<any, any> {
     return (
       <div className="HomeContainer">
         <h1 className="HomeContainer_heading">
-          <span style={{ marginLeft: '8.5%' }}>Finding Falcone</span>
+          <span style={{ marginLeft: '8.5%' }}>Finding Falcone!</span>
           <span style={{ float: 'right', marginRight: '32px' }}>
             <Button onClick={this.resetData}>
               <Icon type="reload" />
@@ -230,20 +232,23 @@ class Home extends React.Component<any, any> {
         </div>
         <div className="Button_find">
           <Button
-            onClick={() => {
+            onClick={async () => {
               const vehicleArray = Object.keys(
                 this.state.selected_vehicles
               ).map(i => this.state.selected_vehicles[i])
               const planetsArray = Object.keys(this.state.selected_planets).map(
                 i => this.state.selected_planets[i]
               )
-              this.props.findFalconCall({
+              await this.props.findFalconCall({
                 token: this.props.authentication_token,
                 planet_names: planetsArray,
                 vehicle_names: vehicleArray,
+                total_time: this.total_time,
               })
+              this.props.history.push('/result')
             }}
           >
+            {this.props.falcon_finding_loader ? <Icon type="loading" /> : null}
             Find Falcon!
           </Button>
         </div>
@@ -256,6 +261,7 @@ Home.propTypes = {
   planets_metadata: PropTypes.array,
   vehicles_metadata: PropTypes.array,
   authentication_token: PropTypes.string,
+  falcon_finding_loader: PropTypes.bool,
 }
 
 const mapStateToProps = (state: any) => {
@@ -264,6 +270,7 @@ const mapStateToProps = (state: any) => {
     planets_metadata: state.planets_metadata,
     vehicles_metadata: state.vehicles_metadata,
     authentication_token: state.authentication_token,
+    falcon_finding_loader: state.falcon_finding_loader,
   }
 }
 
@@ -276,4 +283,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Home))
