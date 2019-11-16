@@ -6,6 +6,7 @@ const { Option } = Select
 interface PlanetProps {
   planets: Array<{ name: string; distance: number }>
   disabled: boolean
+  value?: string
   onOptionChange?: any
   OnSearchChange?: any
 }
