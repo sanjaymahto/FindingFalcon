@@ -12,6 +12,7 @@ class Home extends React.Component<any, any> {
   static propTypes: {
     planets_metadata: PropTypes.Requireable<Array<any>>
     vehicles_metadata: PropTypes.Requireable<Array<any>>
+    authentication_token: PropTypes.Requireable<string>
   }
   total_time: number
 
@@ -145,7 +146,6 @@ class Home extends React.Component<any, any> {
 
     if (planetMetaData.distance > vehicleMetaData.max_distance) {
       message.error("Sorry! This vehicle can't reach the planet you selected")
-      debugger
       this.setState(
         (prevState: { selected_vehicles: any; disabled_vehicles: any }) => {
           return {
@@ -155,7 +155,6 @@ class Home extends React.Component<any, any> {
           }
         },
         () => {
-          debugger
           const vehicles = this.state.vehicles.filter(
             (vh: { name: React.ReactText; total_no: number }) => {
               if (vh.name === this.state.selected_vehicles[i]) {
@@ -230,7 +229,23 @@ class Home extends React.Component<any, any> {
           <p className="TimeCalculator">Time Taken: {this.total_time}</p>
         </div>
         <div className="Button_find">
-          <Button>Find Falcon!</Button>
+          <Button
+            onClick={() => {
+              const vehicleArray = Object.keys(
+                this.state.selected_vehicles
+              ).map(i => this.state.selected_vehicles[i])
+              const planetsArray = Object.keys(this.state.selected_planets).map(
+                i => this.state.selected_planets[i]
+              )
+              this.props.findFalconCall({
+                token: this.props.authentication_token,
+                planet_names: planetsArray,
+                vehicle_names: vehicleArray,
+              })
+            }}
+          >
+            Find Falcon!
+          </Button>
         </div>
       </div>
     )
@@ -240,6 +255,7 @@ class Home extends React.Component<any, any> {
 Home.propTypes = {
   planets_metadata: PropTypes.array,
   vehicles_metadata: PropTypes.array,
+  authentication_token: PropTypes.string,
 }
 
 const mapStateToProps = (state: any) => {
@@ -247,6 +263,7 @@ const mapStateToProps = (state: any) => {
   return {
     planets_metadata: state.planets_metadata,
     vehicles_metadata: state.vehicles_metadata,
+    authentication_token: state.authentication_token,
   }
 }
 

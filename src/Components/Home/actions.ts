@@ -3,6 +3,7 @@ import {
   getPlanetsData,
   getVehiclesData,
   getAuthenticationTokenData,
+  findFalconServiceCall,
 } from '../../Services/index'
 
 /**
@@ -43,6 +44,20 @@ export const setAuthenticationToken = () => async (
   const payload = await getAuthenticationTokenData()
   dispatch({
     type: CONSTANTS.SET_AUTHENTICATION_TOKEN,
+    payload: payload,
+  })
+}
+
+/**
+ * Function to get falcon result
+ *
+ */
+export const findFalconCall = (param: any) => async (
+  dispatch: (arg0: { type: string; payload: any }) => void
+) => {
+  const payload = await findFalconServiceCall(param)
+  dispatch({
+    type: CONSTANTS.SET_FIND_FALCON_RESULT,
     payload: payload,
   })
 }

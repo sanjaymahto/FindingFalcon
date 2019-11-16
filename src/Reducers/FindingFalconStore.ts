@@ -50,6 +50,19 @@ function setAuthenticationToken(
 }
 
 /**
+ * function to set find falcon result into reducer
+ *
+ * @param  {Object} state - state Object
+ * @param  {Object} payload - payload Object
+ */
+function setFindFalconResult(
+  state: { set: (arg0: string, arg1: any) => void },
+  payload: any
+) {
+  return state.set('falcon_finding_response', payload)
+}
+
+/**
  * This function mutates the supplied state based on
  * the type of the action.
  *
@@ -71,6 +84,8 @@ function falconSearchReducer(
       return setVehiclesMetadata(state, payload)
     case CONSTANTS.SET_AUTHENTICATION_TOKEN:
       return setAuthenticationToken(state, payload)
+    case CONSTANTS.SET_FIND_FALCON_RESULT:
+      return setFindFalconResult(state, payload)
     default:
       return state
   }
