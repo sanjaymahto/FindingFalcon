@@ -1,12 +1,12 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { Row, Col, Button, Icon, message } from 'antd'
-import { bindActionCreators, Dispatch } from 'redux'
 import { withRouter } from 'react-router'
+import { bindActionCreators, Dispatch } from 'redux'
+import { Row, Col, Button, Icon, message } from 'antd'
 import { PlanetDropdown } from '../PlanetDropdown'
-import * as actions from './actions'
 import { VehicleRadioComp } from '../VehicleRadioComponent'
+import * as actions from './actions'
 import './index.scss'
 
 class Home extends React.Component<any, any> {
@@ -75,39 +75,9 @@ class Home extends React.Component<any, any> {
         }
       },
       () => {
-        this.PlanetsFilter(planet)
+        this.filterPlanetsArray(planet)
       }
     )
-  }
-
-  PlanetsFilter = (i: string | number) => {
-    const planets = this.state.planets.filter(
-      (planet: { name: React.ReactText }) => {
-        if (!(this.state.selected_planets[i] === planet.name)) {
-          return planet
-        } else {
-          return null
-        }
-      }
-    )
-    this.setState({
-      planets,
-    })
-  }
-
-  vehiclesFilter = (i: string | number) => {
-    const vehicles = this.state.vehicles.filter(
-      (vh: { name: React.ReactText; total_no: number }) => {
-        if (vh.name === this.state.selected_vehicles[i]) {
-          return Object.assign({ ...vh }, { total_no: --vh.total_no })
-        } else {
-          return vh
-        }
-      }
-    )
-    this.setState({
-      vehicles,
-    })
   }
 
   onVehicleSelect = (event: any, vehicle: any) => {
@@ -162,11 +132,41 @@ class Home extends React.Component<any, any> {
             }
           )
         } else {
-          this.vehiclesFilter(vehicle)
+          this.filterVehiclesArray(vehicle)
           this.calculateTimeTaken(vehicle)
         }
       }
     )
+  }
+
+  filterPlanetsArray = (planetNumber: number) => {
+    const planets = this.state.planets.filter(
+      (planet: { name: React.ReactText }) => {
+        if (!(this.state.selected_planets[planetNumber] === planet.name)) {
+          return planet
+        } else {
+          return null
+        }
+      }
+    )
+    this.setState({
+      planets,
+    })
+  }
+
+  filterVehiclesArray = (vehicleNumber: number) => {
+    const vehicles = this.state.vehicles.filter(
+      (vh: { name: React.ReactText; total_no: number }) => {
+        if (vh.name === this.state.selected_vehicles[vehicleNumber]) {
+          return Object.assign({ ...vh }, { total_no: --vh.total_no })
+        } else {
+          return vh
+        }
+      }
+    )
+    this.setState({
+      vehicles,
+    })
   }
 
   calculateTimeTaken = (i: string | number) => {

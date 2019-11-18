@@ -1,40 +1,32 @@
+.SubheadingTextStyle {
+  font-size: larger;
+  text-align: center;
+  font-weight: 600;
+  font-style: 'tahoma';
+  font-weight: 500;
+}
+
 .ResultContainer {
   &_heading {
     text-align: center;
     font-weight: 600;
   }
   &_subHeading {
-    text-align: center;
-    font-weight: 600;
-    font-size: larger;
-    font-style: 'tahoma';
-    font-weight: 500;
+    @extend .SubheadingTextStyle;
   }
 }
 
 .FoundTime {
   margin-top: 2%;
-  font-size: larger;
-  text-align: center;
-  font-weight: 600;
-  font-style: 'tahoma';
-  font-weight: 500;
+  @extend .SubheadingTextStyle;
 }
 
 .FoundPlanetText {
-  text-align: center;
-  font-weight: 600;
-  font-size: larger;
-  font-style: 'tahoma';
-  font-weight: 500;
+  @extend .SubheadingTextStyle;
 }
 .Button {
   &_restart {
     margin-top: 2%;
-    font-size: larger;
-    text-align: center;
-    font-weight: 600;
-    font-style: 'tahoma';
-    font-weight: 500;
+    @extend .SubheadingTextStyle;
   }
 }
