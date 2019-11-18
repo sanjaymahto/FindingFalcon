@@ -13,10 +13,18 @@ import {
 export const setPlanetsData = () => async (
   dispatch: (arg0: { type: string; payload: any }) => void
 ) => {
+  dispatch({
+    type: CONSTANTS.SHOW_FALCON_FIND_LOADER,
+    payload: true,
+  })
   const payload = await getPlanetsData()
   dispatch({
     type: CONSTANTS.SET_PLANET_METADATA,
     payload: payload,
+  })
+  dispatch({
+    type: CONSTANTS.SHOW_FALCON_FIND_LOADER,
+    payload: false,
   })
 }
 
