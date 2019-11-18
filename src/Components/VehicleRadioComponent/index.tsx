@@ -15,6 +15,7 @@ interface PlanetProps {
     speed: number
   }>
   disabled: boolean
+  value: string
   onOptionChange?: any
 }
 
@@ -42,7 +43,11 @@ const vehicleOptions = (
 
 export const VehicleRadioComp: React.SFC<PlanetProps> = props => {
   return (
-    <Radio.Group onChange={props.onOptionChange} disabled={props.disabled}>
+    <Radio.Group
+      value={props.value}
+      onChange={props.onOptionChange}
+      disabled={props.disabled}
+    >
       {vehicleOptions(props.vehicles)}
     </Radio.Group>
   )
