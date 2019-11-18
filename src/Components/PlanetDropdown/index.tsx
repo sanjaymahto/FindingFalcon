@@ -1,8 +1,6 @@
 import * as React from 'react'
 import { Select } from 'antd'
 
-const { Option } = Select
-
 interface PlanetProps {
   planets: Array<{ name: string; distance: number }>
   disabled: boolean
@@ -11,6 +9,8 @@ interface PlanetProps {
   OnSearchChange?: any
   loading: boolean
 }
+
+const { Option } = Select
 
 const planetOptions = (planets: Array<{ name: string; distance: number }>) => {
   return planets.map(
@@ -27,8 +27,8 @@ const planetOptions = (planets: Array<{ name: string; distance: number }>) => {
 export const PlanetDropdown: React.SFC<PlanetProps> = props => {
   return (
     <Select
-      loading={props.loading && !props.planets.length ? true : false}
       showSearch
+      loading={props.loading && !props.planets.length ? true : false}
       style={{ width: 200 }}
       placeholder="Select a planet"
       optionFilterProp="children"
