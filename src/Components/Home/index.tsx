@@ -63,12 +63,9 @@ class Home extends React.Component<any, any> {
           selected_planets: Object.assign(prevState.selected_planets, {
             [planet]: event,
           }),
-          disabled_planets: Object.assign(
-            {
-              [planet]: true,
-            },
-            prevState.disabled_planets
-          ),
+          disabled_planets: Object.assign(prevState.disabled_planets, {
+            [planet]: true,
+          }),
           vehicles_options_visibility: Object.assign(
             prevState.vehicles_options_visibility,
             {
@@ -126,8 +123,48 @@ class Home extends React.Component<any, any> {
         }
       },
       () => {
-        this.vehiclesFilter(vehicle)
-        this.calculateTimeTaken(vehicle)
+        const planet = this.state.selected_planets[vehicle]
+        const planetMetaData = this.props.planets_metadata.find(
+          (pl: { name: any }) => {
+            return pl.name === planet
+          }
+        )
+        let flag = true
+        this.state.vehicles.forEach(
+          (vh: { max_distance: number; total_no: number }) => {
+            if (vh.max_distance >= planetMetaData.distance && vh.total_no) {
+              flag = false
+            }
+          }
+        )
+        if (flag) {
+          message.destroy()
+          message.error(
+            `Selected Planet Can't be reached by any available vehicles. Please Select another Planet.`
+          )
+          this.setState(
+            (prevState: {
+              disabled_planets: any
+              disabled_vehicles: any
+              selected_vehicles: any
+            }) => {
+              return {
+                disabled_planets: Object.assign(prevState.disabled_planets, {
+                  [vehicle]: false,
+                }),
+                disabled_vehicles: Object.assign(prevState.disabled_vehicles, {
+                  [vehicle]: false,
+                }),
+                selected_vehicles: Object.assign(prevState.selected_vehicles, {
+                  [vehicle]: null,
+                }),
+              }
+            }
+          )
+        } else {
+          this.vehiclesFilter(vehicle)
+          this.calculateTimeTaken(vehicle)
+        }
       }
     )
   }
@@ -185,6 +222,7 @@ class Home extends React.Component<any, any> {
             <p>{`Destination ${++i}`}</p>
             <PlanetDropdown
               planets={this.state.planets}
+              loading={this.props.falcon_finding_loader}
               onOptionChange={(event: any) => {
                 this.onPlanetSelect(event, i)
               }}
@@ -192,6 +230,7 @@ class Home extends React.Component<any, any> {
             />
             {this.state.vehicles_options_visibility[i] ? (
               <VehicleRadioComp
+                value={this.state.selected_vehicles[i] || null}
                 vehicles={this.state.vehicles}
                 onOptionChange={(event: any) => {
                   this.onVehicleSelect(event, i)
