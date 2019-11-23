@@ -308,19 +308,32 @@ class Home extends React.Component<any, any> {
         <div className="Button_find">
           <Button
             onClick={async () => {
-              const vehicleArray = Object.keys(
-                this.state.selected_vehicles
-              ).map(i => this.state.selected_vehicles[i])
-              const planetsArray = Object.keys(this.state.selected_planets).map(
-                i => this.state.selected_planets[i]
-              )
-              await this.props.findFalconCall({
-                token: this.props.authentication_token,
-                planet_names: planetsArray,
-                vehicle_names: vehicleArray,
-                total_time: this.total_time,
-              })
-              this.props.history.push('/result')
+              const allTrue =
+                Object.keys(this.state.disabled_vehicles).every(k => {
+                  return this.state.disabled_vehicles[k] === true
+                }) &&
+                Object.keys(this.state.disabled_planets).every(k => {
+                  return this.state.disabled_planets[k] === true
+                })
+              if (allTrue) {
+                const vehicleArray = Object.keys(
+                  this.state.selected_vehicles
+                ).map(i => this.state.selected_vehicles[i])
+                const planetsArray = Object.keys(
+                  this.state.selected_planets
+                ).map(i => this.state.selected_planets[i])
+                await this.props.findFalconCall({
+                  token: this.props.authentication_token,
+                  planet_names: planetsArray,
+                  vehicle_names: vehicleArray,
+                  total_time: this.total_time,
+                })
+                this.props.history.push('/result')
+              } else {
+                message.warning(
+                  `Please select required Planets and Vehicles before finding Falcone!`
+                )
+              }
             }}
           >
             {this.props.falcon_finding_loader ? <Icon type="loading" /> : null}
