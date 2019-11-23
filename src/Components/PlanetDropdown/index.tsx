@@ -32,6 +32,7 @@ export const PlanetDropdown: React.SFC<PlanetProps> = props => {
       style={{ width: 200 }}
       placeholder="Select a planet"
       optionFilterProp="children"
+      value={props.value || `Select a Planet`}
       onChange={props.onOptionChange}
       onSearch={props.OnSearchChange}
       disabled={props.disabled}

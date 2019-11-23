@@ -44,12 +44,14 @@ class Home extends React.Component<any, any> {
 
   async componentDidMount() {
     await this.props.setPlanetsData()
-    await this.props.setVehiclesData()
-    await this.props.setAuthenticationToken()
     this.setState({
       planets: this.props.planets_metadata,
+    })
+    await this.props.setVehiclesData()
+    this.setState({
       vehicles: this.props.vehicles_metadata,
     })
+    await this.props.setAuthenticationToken()
   }
 
   onPlanetSelect = (event: any, planet: any) => {
@@ -218,15 +220,19 @@ class Home extends React.Component<any, any> {
     return Array.apply(null, Array(4)).map((e, i) => {
       return (
         <Col span={4} key={i}>
-          <div>
+          <>
             <p>{`Destination ${++i}`}</p>
             <PlanetDropdown
               planets={this.state.planets}
+              value={this.state.selected_planets[i] || null}
               loading={this.props.falcon_finding_loader}
               onOptionChange={(event: any) => {
                 this.onPlanetSelect(event, i)
               }}
-              disabled={this.state.disabled_planets[i]}
+              disabled={
+                this.state.disabled_planets[i] ||
+                this.props.falcon_finding_loader
+              }
             />
             {this.state.vehicles_options_visibility[i] ? (
               <VehicleRadioComp
@@ -238,14 +244,40 @@ class Home extends React.Component<any, any> {
                 disabled={this.state.disabled_vehicles[i]}
               />
             ) : null}
-          </div>
+          </>
         </Col>
       )
     })
   }
 
-  resetData = () => {
-    window.location.reload()
+  resetData = async () => {
+    this.total_time = 0
+    this.setState({
+      selected_planets: {},
+      disabled_planets: {},
+      selected_vehicles: {},
+      disabled_vehicles: {
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+      },
+      vehicles_options_visibility: {
+        1: false,
+        2: false,
+        3: false,
+        4: false,
+      },
+      planets: [],
+      vehicles: [],
+    })
+    this.setState({
+      planets: this.props.planets_metadata,
+    })
+    await this.props.setVehiclesData()
+    this.setState({
+      vehicles: this.props.vehicles_metadata,
+    })
   }
 
   render() {
@@ -263,7 +295,11 @@ class Home extends React.Component<any, any> {
         <h4 className="HomeContainer_subHeading">
           Select planets you want to search in:
         </h4>
-        <Row type="flex" justify="space-around">
+        <Row
+          className="planets_and_vehicle_select"
+          type="flex"
+          justify="space-around"
+        >
           {this.planetAndVehicleSelectionList()}
         </Row>
         <div>
