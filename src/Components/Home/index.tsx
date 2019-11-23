@@ -220,7 +220,7 @@ class Home extends React.Component<any, any> {
     return Array.apply(null, Array(4)).map((e, i) => {
       return (
         <Col span={4} key={i}>
-          <div>
+          <>
             <p>{`Destination ${++i}`}</p>
             <PlanetDropdown
               planets={this.state.planets}
@@ -244,7 +244,7 @@ class Home extends React.Component<any, any> {
                 disabled={this.state.disabled_vehicles[i]}
               />
             ) : null}
-          </div>
+          </>
         </Col>
       )
     })
@@ -295,7 +295,11 @@ class Home extends React.Component<any, any> {
         <h4 className="HomeContainer_subHeading">
           Select planets you want to search in:
         </h4>
-        <Row type="flex" justify="space-around">
+        <Row
+          className="planets_and_vehicle_select"
+          type="flex"
+          justify="space-around"
+        >
           {this.planetAndVehicleSelectionList()}
         </Row>
         <div>
