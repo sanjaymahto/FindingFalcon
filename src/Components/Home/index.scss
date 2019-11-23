@@ -37,5 +37,11 @@ $break-large: 768px;
     flex-flow: column !important;
     width: 100% !important;
     align-items: center !important;
+    padding-right: 20%;
+  }
+  .HomeContainer {
+    &_subHeading {
+      margin-right: 8.5%;
+    }
   }
 }
